@@ -24,19 +24,19 @@ public partial class Car
 
     public string Fenykep { get; set; } = null!;
 
-    public string MotorType { get; set; } = null!;
+    public string motor_type { get; set; } = null!;
 
-    public int PowerHp { get; set; }
+    public int power_hp { get; set; }
 
-    public string Gearbox { get; set; } = null!;
+    public string gearbox { get; set; } = null!;
 
-    public int Seats { get; set; }
+    public int seats { get; set; }
 
-    public string Drivetrain { get; set; } = null!;
+    public string drivetrain { get; set; } = null!;
 
-    public decimal FuelConsumption { get; set; }
+    public decimal fuelconsumption { get; set; }
 
-    public string Description { get; set; } = null!;
+    public string description { get; set; } = null!;
 
     public virtual ICollection<Maintenance> Maintenances { get; set; } = new List<Maintenance>();
 
