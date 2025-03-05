@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ProjektNeveBackend.Models;
 
@@ -24,4 +25,8 @@ public partial class User
     public DateTime? RegisztracioDatuma { get; set; }
 
     public string FenykepUtvonal { get; set; } = null!;
+
+    [JsonIgnore]
+
+    public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
 }

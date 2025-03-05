@@ -13,5 +13,5 @@ public partial class Client
 
     public string? Role { get; set; }
 
-    public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+    public virtual Customer? Customer { get; set; }
 }

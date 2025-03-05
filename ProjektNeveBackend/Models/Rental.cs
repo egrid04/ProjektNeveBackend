@@ -5,9 +5,9 @@ namespace ProjektNeveBackend.Models;
 
 public partial class Rental
 {
-    public int RentalId { get; set; }
+    public int Id { get; set; }
 
-    public int? CustomerId { get; set; }
+    public int? UserId { get; set; }
 
     public int? CarId { get; set; }
 
@@ -23,7 +23,7 @@ public partial class Rental
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
-    public virtual Customer? Customer { get; set; }
-
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+    public virtual User? User { get; set; }
 }

@@ -13,118 +13,130 @@ namespace ProjektNeveBackend.Controllers
     [ApiController]
     public class ReservationController : ControllerBase
     {
-        private readonly TurbodriveContext _context;
-
-        public ReservationController(TurbodriveContext context)
-        {
-            _context = context;
-        }
 
         // GET: api/Reservation
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rental>>> GetAllReservations()
         {
-            return await _context.Rentals
-                .Include(r => r.Car)
-                .Include(r => r.Customer)
-                .ToListAsync();
+            using (var _context = new TurbodriveContext())
+            {
+                return await _context.Rentals
+                    .Include(r => r.Car)
+                    .Include(r => r.User)
+                    .ToListAsync();
+            }
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRentalById(int id)
         {
-            var rental = await _context.Rentals.FindAsync(id);
-
-            if (rental == null)
+            using (var _context = new TurbodriveContext())
             {
-                return NotFound();
-            }
+                var rental = await _context.Rentals.FindAsync(id);
 
-            return Ok(rental);
+                if (rental == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(rental);
+            }
         }
 
 
-        
 
         // POST: api/Reservation
         [HttpPost]
         public async Task<IActionResult> CreateRental([FromBody] RentalCreateDto rentalDto)
         {
-            if (rentalDto == null)
+            using (var _context = new TurbodriveContext())
             {
-                return BadRequest("Invalid rental data.");
+                if (rentalDto == null)
+                {
+                    return BadRequest("Invalid rental data.");
+                }
+
+                var car = await _context.Cars.FindAsync(rentalDto.CarId);
+                if (car == null)
+                {
+                    return NotFound("Car not found.");
+                }
+
+                var rental = new Rental
+                {
+                    UserId = rentalDto.CustomerId,
+                    CarId = rentalDto.CarId,
+                    RentalDate = rentalDto.RentalDate,
+                    ReturnDate = rentalDto.ReturnDate,
+                    TotalPrice = (rentalDto.ReturnDate - rentalDto.RentalDate).Days * car.RentalPricePerDay,
+                    Status = rentalDto.Status
+                };
+
+                _context.Rentals.Add(rental);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetRentalById), new { id = rental.Id }, rental);
             }
-
-            var car = await _context.Cars.FindAsync(rentalDto.CarId);
-            if (car == null)
-            {
-                return NotFound("Car not found.");
-            }
-
-            var rental = new Rental
-            {
-                CustomerId = rentalDto.CustomerId,
-                CarId = rentalDto.CarId,
-                RentalDate = rentalDto.RentalDate,
-                ReturnDate = rentalDto.ReturnDate,
-                TotalPrice = (rentalDto.ReturnDate - rentalDto.RentalDate).Days * car.RentalPricePerDay,
-                Status = rentalDto.Status
-            };
-
-            _context.Rentals.Add(rental);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetRentalById), new { id = rental.RentalId }, rental);
         }
 
         // PUT: api/Reservation/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReservation(int id, Rental rental)
         {
-            if (id != rental.RentalId)
+            using (var _context = new TurbodriveContext())
             {
-                return BadRequest("ID mismatch.");
-            }
-
-            _context.Entry(rental).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReservationExists(id))
+                if (id != rental.Id)
                 {
-                    return NotFound();
+                    return BadRequest("ID mismatch.");
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(rental).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ReservationExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
         }
 
         // DELETE: api/Reservation/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(int id)
         {
-            var rental = await _context.Rentals.FindAsync(id);
-            if (rental == null)
+            using (var _context = new TurbodriveContext())
             {
-                return NotFound();
+                var rental = await _context.Rentals.FindAsync(id);
+                if (rental == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Rentals.Remove(rental);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Rentals.Remove(rental);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool ReservationExists(int id)
         {
-            return _context.Rentals.Any(e => e.RentalId == id);
+            using (var _context = new TurbodriveContext())
+            {
+                return _context.Rentals.Any(e => e.Id == id);
+            }
         }
     }
 }

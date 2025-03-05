@@ -40,7 +40,6 @@ public partial class TurbodriveContext : DbContext
         modelBuilder.Entity<Car>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
-            entity.Property(e => e.Fenykep).HasMaxLength(64);
 
             entity.ToTable("car");
 
@@ -48,6 +47,19 @@ public partial class TurbodriveContext : DbContext
             entity.Property(e => e.Brand)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'NULL'");
+            entity.Property(e => e.Description)
+                .HasColumnType("mediumtext")
+                .HasColumnName("description");
+            entity.Property(e => e.Drivetrain)
+                .HasMaxLength(50)
+                .HasColumnName("drivetrain");
+            entity.Property(e => e.Fenykep).HasMaxLength(64);
+            entity.Property(e => e.FuelConsumption)
+                .HasPrecision(10, 4)
+                .HasColumnName("fuel_consumption");
+            entity.Property(e => e.Gearbox)
+                .HasMaxLength(50)
+                .HasColumnName("gearbox");
             entity.Property(e => e.LicensePlate)
                 .HasMaxLength(10)
                 .HasDefaultValueSql("'NULL'");
@@ -57,9 +69,18 @@ public partial class TurbodriveContext : DbContext
             entity.Property(e => e.Model)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'NULL'");
+            entity.Property(e => e.MotorType)
+                .HasMaxLength(100)
+                .HasColumnName("motor_type");
+            entity.Property(e => e.PowerHp)
+                .HasColumnType("int(11)")
+                .HasColumnName("power_hp");
             entity.Property(e => e.RentalPricePerDay)
                 .HasPrecision(10)
                 .HasDefaultValueSql("'NULL'");
+            entity.Property(e => e.Seats)
+                .HasColumnType("int(11)")
+                .HasColumnName("seats");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'NULL'");
@@ -118,15 +139,15 @@ public partial class TurbodriveContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PRIMARY");
+            entity.HasKey(e => e.UserId).HasName("PRIMARY");
 
             entity.ToTable("customers");
 
             entity.HasIndex(e => e.UserId, "user_id");
 
-            entity.Property(e => e.CustomerId)
+            entity.Property(e => e.UserId)
                 .HasColumnType("int(11)")
-                .HasColumnName("customer_id");
+                .HasColumnName("user_id");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("'NULL'")
@@ -151,12 +172,9 @@ public partial class TurbodriveContext : DbContext
                 .HasDefaultValueSql("'NULL'")
                 .HasColumnType("date")
                 .HasColumnName("registration_date");
-            entity.Property(e => e.UserId)
-                .HasColumnType("int(11)")
-                .HasColumnName("user_id");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Customers)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.User).WithOne(p => p.Customer)
+                .HasForeignKey<Customer>(d => d.UserId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("customers_ibfk_1");
         });
@@ -231,51 +249,43 @@ public partial class TurbodriveContext : DbContext
 
         modelBuilder.Entity<Rental>(entity =>
         {
-            entity.HasKey(e => e.RentalId).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("rentals");
 
             entity.HasIndex(e => e.CarId, "car_id");
 
-            entity.HasIndex(e => e.CustomerId, "customer_id");
+            entity.HasIndex(e => e.UserId, "customer_id");
 
-            entity.Property(e => e.RentalId)
-                .HasColumnType("int(11)")
-                .HasColumnName("rental_id");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.CarId)
                 .HasDefaultValueSql("'NULL'")
-                .HasColumnType("int(11)")
-                .HasColumnName("car_id");
-            entity.Property(e => e.CustomerId)
-                .HasDefaultValueSql("'NULL'")
-                .HasColumnType("int(11)")
-                .HasColumnName("customer_id");
+                .HasColumnType("int(11)");
             entity.Property(e => e.RentalDate)
                 .HasDefaultValueSql("'NULL'")
-                .HasColumnType("date")
-                .HasColumnName("rental_date");
+                .HasColumnType("date");
             entity.Property(e => e.ReturnDate)
                 .HasDefaultValueSql("'NULL'")
-                .HasColumnType("date")
-                .HasColumnName("return_date");
+                .HasColumnType("date");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
-                .HasDefaultValueSql("'NULL'")
-                .HasColumnName("status");
+                .HasDefaultValueSql("'NULL'");
             entity.Property(e => e.TotalPrice)
                 .HasPrecision(10)
+                .HasDefaultValueSql("'NULL'");
+            entity.Property(e => e.UserId)
                 .HasDefaultValueSql("'NULL'")
-                .HasColumnName("total_price");
+                .HasColumnType("int(11)");
 
             entity.HasOne(d => d.Car).WithMany(p => p.Rentals)
                 .HasForeignKey(d => d.CarId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("rentals_ibfk_2");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.Rentals)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("rentals_ibfk_1");
+            entity.HasOne(d => d.User).WithMany(p => p.Rentals)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("rentals_ibfk_3");
         });
 
         modelBuilder.Entity<User>(entity =>

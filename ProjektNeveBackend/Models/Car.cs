@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ProjektNeveBackend.Models;
 
@@ -23,20 +24,22 @@ public partial class Car
 
     public string Fenykep { get; set; } = null!;
 
-    public string? motor_type { get; set; }
+    public string MotorType { get; set; } = null!;
 
-    public int? power_hp{  get; set; }
+    public int PowerHp { get; set; }
 
-    public string? gearbox { get; set; }
+    public string Gearbox { get; set; } = null!;
 
-    public int? seats { get; set; }
+    public int Seats { get; set; }
 
-    public string? drivetrain { get; set; }  
+    public string Drivetrain { get; set; } = null!;
 
-    public decimal? fuel_consumption {  get; set; }
+    public decimal FuelConsumption { get; set; }
+
+    public string Description { get; set; } = null!;
 
     public virtual ICollection<Maintenance> Maintenances { get; set; } = new List<Maintenance>();
 
+    [JsonIgnore]
     public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
-
 }
