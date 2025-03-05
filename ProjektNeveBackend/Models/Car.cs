@@ -34,7 +34,7 @@ public partial class Car
 
     public string drivetrain { get; set; } = null!;
 
-    public decimal fuelconsumption { get; set; }
+    public decimal fuel_consumption { get; set; }
 
     public string description { get; set; } = null!;
 

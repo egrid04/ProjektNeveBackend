@@ -47,17 +47,17 @@ public partial class TurbodriveContext : DbContext
             entity.Property(e => e.Brand)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'NULL'");
-            entity.Property(e => e.Description)
+            entity.Property(e => e.description)
                 .HasColumnType("mediumtext")
                 .HasColumnName("description");
-            entity.Property(e => e.Drivetrain)
+            entity.Property(e => e.drivetrain)
                 .HasMaxLength(50)
                 .HasColumnName("drivetrain");
             entity.Property(e => e.Fenykep).HasMaxLength(64);
-            entity.Property(e => e.FuelConsumption)
+            entity.Property(e => e.fuel_consumption)
                 .HasPrecision(10, 4)
                 .HasColumnName("fuel_consumption");
-            entity.Property(e => e.Gearbox)
+            entity.Property(e => e.gearbox)
                 .HasMaxLength(50)
                 .HasColumnName("gearbox");
             entity.Property(e => e.LicensePlate)
@@ -69,16 +69,16 @@ public partial class TurbodriveContext : DbContext
             entity.Property(e => e.Model)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'NULL'");
-            entity.Property(e => e.MotorType)
+            entity.Property(e => e.motor_type)
                 .HasMaxLength(100)
                 .HasColumnName("motor_type");
-            entity.Property(e => e.PowerHp)
+            entity.Property(e => e.power_hp)
                 .HasColumnType("int(11)")
                 .HasColumnName("power_hp");
             entity.Property(e => e.RentalPricePerDay)
                 .HasPrecision(10)
                 .HasDefaultValueSql("'NULL'");
-            entity.Property(e => e.Seats)
+            entity.Property(e => e.seats)
                 .HasColumnType("int(11)")
                 .HasColumnName("seats");
             entity.Property(e => e.Status)
