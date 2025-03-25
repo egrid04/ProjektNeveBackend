@@ -11,5 +11,6 @@
         public string ProfilePicturePath { get; set; }
 
         public string Token { get; set; }
+        public int userId { get; set; }
     }
 }
