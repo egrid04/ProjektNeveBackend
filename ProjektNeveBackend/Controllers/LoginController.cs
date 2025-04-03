@@ -49,7 +49,9 @@ namespace ProjektNeveBackend.Controllers
                         {
                             Program.LoggedInUsers.Add(token, loggedUser);
                         }
-                        return Ok(new LoggedUser { Name = loggedUser.TeljesNev, Email = loggedUser.Email, Permission = loggedUser.Jogosultsag, ProfilePicturePath = loggedUser.FenykepUtvonal, Token = token, userId = loggedUser.Id });
+                        return Ok(new LoggedUser 
+                        { Name = loggedUser.TeljesNev, Email = loggedUser.Email, Permission = loggedUser.Jogosultsag,
+                          ProfilePicturePath = loggedUser.FenykepUtvonal, Token = token, userId = loggedUser.Id });
                     }
                     else
                     {
